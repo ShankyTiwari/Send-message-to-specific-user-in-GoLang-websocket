@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 
-	handlers "./handlers"
+	handlers "group-chat/handlers"
 )
 
 func setStaticFolder(route *mux.Router) {

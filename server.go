@@ -5,12 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-
-	godotenv.Load()
 
 	log.Println("Server will start at http://localhost:8000/")
 

@@ -7,6 +7,7 @@ class App extends React.Component {
             chatUserList: [],
             message: null,
             selectedUserID: null,
+            userID: null
         }
         this.webSocketConnection = null;
     }
@@ -41,22 +42,17 @@ class App extends React.Component {
                 const socketPayload = JSON.parse(event.data);
                 switch (socketPayload.eventName) {
                     case 'join':
+                    case 'disconnect':
                         if (!socketPayload.eventPayload) {
                             return
                         }
+
+                        const userInitPayload = socketPayload.eventPayload;
+
                         this.setState({
-                            chatUserList: socketPayload.eventPayload
+                            chatUserList: userInitPayload.users,
+                            userID: this.state.userID === null ? userInitPayload.userID : this.state.userID
                         });
-
-                        break;
-
-                    case 'disconnect':
-                         if (!socketPayload.eventPayload) {
-                            return
-                         }
-                         this.setState({
-                            chatUserList: socketPayload.eventPayload
-                         });
 
                         break;
 
@@ -99,7 +95,7 @@ class App extends React.Component {
                 this.webSocketConnection.send(JSON.stringify({
                     EventName: 'message',
                     EventPayload: {
-                        socketID: this.state.selectedUserID,
+                        userID: this.state.selectedUserID,
                         message: event.target.value
                     },
                 }));
@@ -137,11 +133,13 @@ class App extends React.Component {
                     <option value={'select-user'} className="username-list">Select User</option>
                     {
                         this.state.chatUserList.map(user => {
-                            return (
-                                <option value={user.socketID} className="username-list">
-                                    {user.username}
-                                </option>
-                            )
+                            if (user.userID !== this.state.userID) {
+                                return (
+                                    <option value={user.userID} className="username-list">
+                                        {user.username}
+                                    </option>
+                                )
+                            }
                         })
                     }
                 </select>
